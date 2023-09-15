@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/responsive/responsive_layout.dart';
 
+import 'responsive/mobile_screen_layout.dart';
+import 'responsive/web_screen_layout.dart';
 import 'utils/colors.dart';
 
 void main() {
@@ -17,7 +20,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: mobileBackgroundColor,
       ),
-      home: Container(),
+      home: const ResponsiveLayout(
+        mobileScreenLayout: MobileScreenLayout(),
+        webScreenLayout: WebScreenLayout(),
+      ),
     );
   }
 }

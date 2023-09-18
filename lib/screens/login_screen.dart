@@ -7,7 +7,6 @@ import '../resources/auth_methods.dart';
 import '../responsive/mobile_screen_layout.dart';
 import '../responsive/responsive_layout.dart';
 import '../responsive/web_screen_layout.dart';
-import '../utils/utils.dart';
 import '../widgets/textfield.dart';
 import 'sign_up_screen.dart';
 

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/widgets/common_appbar.dart';
 
 import '../widgets/post_card.dart';
 
@@ -22,23 +22,11 @@ class _FeedScreenState extends State<FeedScreen> {
           width > webScreen ? webBackgroundColor : mobileBackgroundColor,
       appBar: width > webScreen
           ? null
-          : AppBar(
+          : CommonAppBar(
               backgroundColor: mobileBackgroundColor,
-              centerTitle: false,
-              title: SvgPicture.asset(
-                'assets/images/ic_instagram.svg',
-                color: primaryColor,
-                height: 32,
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.messenger_outline,
-                    color: primaryColor,
-                  ),
-                )
-              ],
+              primaryColor: Colors.blue,
+              messengerButtonCallback: () {},
+              icon: Icons.messenger_outline_sharp,
             ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('posts').snapshots(),
@@ -46,7 +34,7 @@ class _FeedScreenState extends State<FeedScreen> {
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator.adaptive(),
             );
           }
           return ListView.builder(
@@ -56,10 +44,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 horizontal: width > webScreen ? width * 0.3 : 0,
                 vertical: width > webScreen ? 15 : 0,
               ),
-              // child: PostCard(
-              //   snap: snapshot.data!.docs[index].data(),
-              // ),
-              child: const PostCard(),
+              child: PostCard(snap: snapshot.data!.docs[index]),
             ),
           );
         },

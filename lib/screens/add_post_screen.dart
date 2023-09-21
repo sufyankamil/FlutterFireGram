@@ -40,7 +40,7 @@ class _AddPostState extends State<AddPost> {
         );
       } else {
         // upload to storage and db
-        String res = await FireFireStoreMethods().uploadPost(
+        String res = await FireStoreMethods().uploadPost(
           _descriptionController.text,
           _file!,
           uid,

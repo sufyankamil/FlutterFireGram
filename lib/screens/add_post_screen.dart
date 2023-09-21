@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_providers.dart';
@@ -23,43 +24,57 @@ class _AddPostState extends State<AddPost> {
 
   final TextEditingController _descriptionController = TextEditingController();
 
-  // void postImage(String uid, String username, String profImage) async {
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   // start the loading
-  //   try {
-  //     // upload to storage and db
-  //     String res = await FireStoreMethods().uploadPost(
-  //       _descriptionController.text,
-  //       _file!,
-  //       uid,
-  //       username,
-  //       profImage,
-  //     );
-  //     if (res == "success") {
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //       if (context.mounted) {
-  //         showSnackBar(context, 'Posted!', Colors.transparent);
-  //       }
-  //       clearImage();
-  //     } else {
-  //       if (context.mounted) {
-  //         showSnackBar(context, res, Colors.transparent);
-  //       }
-  //     }
-  //   } catch (err) {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //     Fluttertoast.showToast(
-  //       msg: err.toString(),
-  //       backgroundColor: Colors.deepOrangeAccent,
-  //     );
-  //   }
-  // }
+  void postImage(String uid, String username, String profImage) async {
+    setState(() {
+      isLoading = true;
+    });
+    // start the loading
+    try {
+      if (_descriptionController.text.isEmpty) {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(
+          msg: 'Description is empty',
+          backgroundColor: Colors.red,
+        );
+      } else {
+        // upload to storage and db
+        String res = await FireFireStoreMethods().uploadPost(
+          _descriptionController.text,
+          _file!,
+          uid,
+          username,
+          profImage,
+        );
+        if (res == "success") {
+          setState(() {
+            isLoading = false;
+          });
+          if (context.mounted) {
+            Fluttertoast.showToast(
+              msg: 'Posted ${_descriptionController.text.trim()} successfully',
+              backgroundColor: Colors.greenAccent,
+              timeInSecForIosWeb: 3,
+            );
+          }
+          clearImage();
+        } else {
+          if (context.mounted) {
+            showSnackBar(context, res, Colors.transparent);
+          }
+        }
+      }
+    } catch (err) {
+      setState(() {
+        isLoading = false;
+      });
+      Fluttertoast.showToast(
+        msg: err.toString(),
+        backgroundColor: Colors.redAccent,
+      );
+    }
+  }
 
   _selectImage(BuildContext parentContext) async {
     return showDialog(
@@ -138,7 +153,7 @@ class _AddPostState extends State<AddPost> {
               backgroundColor: mobileBackgroundColor,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () {},
+                onPressed: clearImage,
               ),
               title: const Text(
                 'Post to',
@@ -146,7 +161,11 @@ class _AddPostState extends State<AddPost> {
               centerTitle: false,
               actions: <Widget>[
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => postImage(
+                    userProvider.getUser.uid,
+                    userProvider.getUser.username,
+                    userProvider.getUser.photoUrl,
+                  ),
                   child: const Text(
                     "Post",
                     style: TextStyle(

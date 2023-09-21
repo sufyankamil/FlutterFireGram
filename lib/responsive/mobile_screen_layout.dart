@@ -49,21 +49,10 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: SvgPicture.asset(
-          'assets/images/ic_instagram.svg',
-          color: primaryColor,
-          height: 34,
-        ),
-        actions: [
-          IconButton(
-            onPressed: signoutUser,
-            icon: const Icon(Icons.exit_to_app_sharp),
-          )
-        ],
-      ),
+      backgroundColor:
+          width > webScreen ? webBackgroundColor : mobileBackgroundColor,
       body: PageView(
         controller: pageController,
         onPageChanged: onPageChanged,

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/screens/comment_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
 import 'package:instagram_clone/widgets/common_appbar.dart';
@@ -25,7 +26,13 @@ class _FeedScreenState extends State<FeedScreen> {
           : CommonAppBar(
               backgroundColor: mobileBackgroundColor,
               primaryColor: Colors.blue,
-              messengerButtonCallback: () {},
+              messengerButtonCallback: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const CommentScreen(),
+                  ),
+                );
+              },
               icon: Icons.messenger_outline_sharp,
             ),
       body: StreamBuilder(

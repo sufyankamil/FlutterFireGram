@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,6 +26,15 @@ void main() async {
       storageBucket: dotenv.env['STORAGE_BUCKET'],
     ));
   } else {
+    // Pass all uncaught "fatal" errors from the framework to Crashlytics
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
     await Firebase.initializeApp();
   }
   runApp(const MyApp());
@@ -53,7 +63,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.active) {
               // Checking if the snapshot has any data or not
               if (snapshot.hasData) {
-                // if snapshot has data which means user is logged in then we check 
+                // if snapshot has data which means user is logged in then we check
                 // the width of screen and accordingly display the screen layout
                 return const ResponsiveLayout(
                   mobileScreenLayout: MobileScreenLayout(),

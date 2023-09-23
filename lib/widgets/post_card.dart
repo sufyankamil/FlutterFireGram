@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/user_model.dart' as model;
 import 'package:instagram_clone/providers/user_providers.dart';
+import 'package:instagram_clone/screens/comment_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -155,7 +156,13 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => CommentScreen(
+                      snap: widget.snap,
+                    ),
+                  ),
+                ),
                 icon: const Icon(
                   Icons.comment_outlined,
                 ),

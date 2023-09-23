@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/screens/comment_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
 import 'package:instagram_clone/widgets/common_appbar.dart';
@@ -8,7 +7,8 @@ import 'package:instagram_clone/widgets/common_appbar.dart';
 import '../widgets/post_card.dart';
 
 class FeedScreen extends StatefulWidget {
-  const FeedScreen({super.key});
+  final snap;
+  const FeedScreen({super.key, this.snap});
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();
@@ -27,11 +27,11 @@ class _FeedScreenState extends State<FeedScreen> {
               backgroundColor: mobileBackgroundColor,
               primaryColor: Colors.blue,
               messengerButtonCallback: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const CommentScreen(),
-                  ),
-                );
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => CommentScreen( snap: widget.snap,),
+                //   ),
+                // );
               },
               icon: Icons.messenger_outline_sharp,
             ),

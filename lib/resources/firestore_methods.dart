@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:instagram_clone/models/comments.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
@@ -37,6 +38,7 @@ class FireStoreMethods {
     return res;
   }
 
+  // Like posts
   Future<String> likePost(String postId, String uid, List likes) async {
     String res = "Some error occurred while trying to like a post";
     try {
@@ -52,6 +54,59 @@ class FireStoreMethods {
         });
       }
       res = 'success';
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
+  // Post comment
+  Future<String> postComment(String postId, String text, String uid,
+      String name, String profilePic, List commentsLiked) async {
+    String res = "Error occurred while posting comment";
+    try {
+      if (text.isNotEmpty) {
+        // if the likes list contains the user uid, we need to remove it
+        String commentId = const Uuid().v1();
+      
+        // Comments comment = Comments(
+        //   profImage: profilePic,
+        //   username: name,
+        //   uid: uid,
+        //   text: text,
+        //   commentId: commentId,
+        //   datePublished: DateTime.now(),
+        //   commentsLiked: [],
+        // );
+
+        // _firestore
+        //     .collection('posts')
+        //     .doc(postId)
+        //     .collection('comments')
+        //     .doc(commentId)
+        //     .set(
+        //       comment.toJson(),
+        //     );
+        // res = 'success';
+
+        _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .set({
+          'profilePic': profilePic,
+          'name': name,
+          'uid': uid,
+          'text': text,
+          'commentId': commentId,
+          'datePublished': DateTime.now(),
+          'commentsLiked': [],
+        });
+        res = 'success';
+      } else {
+        res = "Please enter text before posting";
+      }
     } catch (err) {
       res = err.toString();
     }

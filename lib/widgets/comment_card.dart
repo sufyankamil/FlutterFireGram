@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/providers/user_providers.dart';
+import 'package:instagram_clone/resources/firestore_methods.dart';
+import 'package:instagram_clone/models/user_model.dart' as model;
+import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CommentCard extends StatefulWidget {
   final snap;
@@ -10,9 +15,12 @@ class CommentCard extends StatefulWidget {
 }
 
 class _CommentCardState extends State<CommentCard> {
+  bool isLikeAnimating = false;
+
   @override
   Widget build(BuildContext context) {
-    // print(widget.snap.data().length);
+    print(widget.snap.data()['commentsLiked']);
+    final model.User user = Provider.of<UserProvider>(context).getUser;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Row(
@@ -58,11 +66,40 @@ class _CommentCardState extends State<CommentCard> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: const Icon(
-              Icons.favorite,
-              size: 16,
+          GestureDetector(
+            onTap: () async {
+              await FireStoreMethods().likeComment(
+                widget.snap['postId'],
+                user.uid,
+                widget.snap['commentsLiked'],
+                widget.snap['commentId'],
+              );
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: LikeAnimation(
+                isAnimating: widget.snap['commentsLiked'].contains(user.uid),
+                smallLike: true,
+                child: IconButton(
+                  icon: widget.snap['commentsLiked'].contains(user.uid)
+                      ? const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        )
+                      : const Icon(
+                          Icons.favorite_border,
+                        ),
+                  onPressed: () => FireStoreMethods().likeComment(
+                    widget.snap['postId'],
+                    user.uid,
+                    widget.snap['commentsLiked'],
+                    widget.snap['commentId'],
+                  ),
+                ),
+              ),
             ),
           )
         ],

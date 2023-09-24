@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:instagram_clone/models/user_model.dart' as model;
 import 'package:instagram_clone/providers/user_providers.dart';
 import 'package:instagram_clone/screens/comment_screen.dart';
@@ -20,6 +22,88 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+
+  int commentLen = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCommentLen();
+  }
+
+  fetchCommentLen() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postId'])
+          .collection('comments')
+          .get();
+      commentLen = snap.docs.length;
+    } catch (err) {
+      Fluttertoast.showToast(
+        msg: err.toString(),
+        backgroundColor: Colors.red,
+      );
+    }
+    setState(() {});
+  }
+
+  Future<void> showDeleteConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: const Text('Delete Post'),
+          content: const Text('Are you sure you want to delete this post?'),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            CupertinoDialogAction(
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                String res = await FireStoreMethods().deletePost(
+                  widget.snap['postId'],
+                );
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+                if (res != 'success') {
+                  if (context.mounted) {
+                    Fluttertoast.showToast(
+                      msg: res,
+                      backgroundColor: Colors.red,
+                    );
+                  }
+                } else {
+                  if (context.mounted) {
+                    Fluttertoast.showToast(
+                      msg: 'Post was successfully deleted',
+                      backgroundColor: Colors.orangeAccent,
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deletePost(String postId) async {
+    try {
+      await FireStoreMethods().deletePost(postId);
+    } catch (err) {
+      Fluttertoast.showToast(
+        msg: err.toString(),
+        backgroundColor: Colors.red,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,34 +142,44 @@ class _PostCardState extends State<PostCard> {
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    showCupertinoDialog(
-                      context: context,
-                      builder: (context) => Dialog(
-                        child: ListView(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shrinkWrap: true,
-                          children: ['Delete', 'Report']
-                              .map(
-                                (e) => InkWell(
-                                  onTap: () {},
-                                  child: Container(
+                widget.snap['uid'].toString() == user.uid
+                    ? IconButton(
+                        onPressed: () {
+                          showDialog(
+                            useRootNavigator: false,
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                child: ListView(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 12, horizontal: 16),
-                                    child: Text(e),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.more_vert_sharp,
-                  ),
-                )
+                                        vertical: 16),
+                                    shrinkWrap: true,
+                                    children: [
+                                      'Delete',
+                                    ]
+                                        .map(
+                                          (e) => InkWell(
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 16),
+                                                child: Text(e),
+                                              ),
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                                showDeleteConfirmationDialog(
+                                                    context);
+                                              }),
+                                        )
+                                        .toList()),
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.more_vert),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -227,19 +321,43 @@ class _PostCardState extends State<PostCard> {
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: const Text(
-                        'view all comments',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: secondaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
+                  commentLen < 1
+                      ? const Text(
+                          'No comments',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: secondaryColor,
+                          ),
+                        )
+                      : commentLen > 1
+                          ? InkWell(
+                              onTap: () {},
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  'View all $commentLen comments',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () {},
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  'View $commentLen comment',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                              ),
+                            ),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(

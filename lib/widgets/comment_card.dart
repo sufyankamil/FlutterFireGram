@@ -17,16 +17,6 @@ class CommentCard extends StatefulWidget {
 class _CommentCardState extends State<CommentCard> {
   bool isLikeAnimating = false;
 
-  bool isDataEmpty() {
-    return widget.snap.data()['postId'] == null ||
-        widget.snap.data()['name'] == null ||
-        widget.snap.data()['text'] == null ||
-        widget.snap.data()['datePublished'] == null ||
-        widget.snap.data()['profilePic'] == null ||
-        widget.snap.data()['commentId'] == null ||
-        widget.snap.data()['commentsLiked'] == null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final model.User user = Provider.of<UserProvider>(context).getUser;

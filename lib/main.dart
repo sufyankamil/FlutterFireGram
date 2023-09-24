@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:instagram_clone/resources/auth_methods.dart';
 import 'package:instagram_clone/responsive/responsive_layout.dart';
 import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -48,7 +49,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => UserProvider(),
+          create: (_) => UserProvider(
+            AuthMethods()
+          ),
         ),
       ],
       child: MaterialApp(

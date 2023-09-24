@@ -34,7 +34,12 @@ class _CommentScreenState extends State<CommentScreen> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<UserProvider>(context).getUser;
-    
+
+    bool isDataEmpty(
+        AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      return !snapshot.hasData || snapshot.data!.docs.isEmpty;
+    }
+
     void postComment(String uid, String name, String profilePic) async {
       try {
         String res = await FireStoreMethods().postComment(
@@ -90,12 +95,20 @@ class _CommentScreenState extends State<CommentScreen> {
             );
           }
 
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (ctx, index) => CommentCard(
-              snap: snapshot.data!.docs[index],
-            ),
-          );
+          // Check if the data is empty
+          if (isDataEmpty(snapshot)) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: const Center(child: Text('You don\'t have any comments.')),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (ctx, index) => CommentCard(
+                snap: snapshot.data!.docs[index],
+              ),
+            );
+          }
         },
       ),
       bottomNavigationBar: SafeArea(

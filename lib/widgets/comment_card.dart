@@ -17,10 +17,20 @@ class CommentCard extends StatefulWidget {
 class _CommentCardState extends State<CommentCard> {
   bool isLikeAnimating = false;
 
+  bool isDataEmpty() {
+    return widget.snap.data()['postId'] == null ||
+        widget.snap.data()['name'] == null ||
+        widget.snap.data()['text'] == null ||
+        widget.snap.data()['datePublished'] == null ||
+        widget.snap.data()['profilePic'] == null ||
+        widget.snap.data()['commentId'] == null ||
+        widget.snap.data()['commentsLiked'] == null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(widget.snap.data()['commentsLiked']);
     final model.User user = Provider.of<UserProvider>(context).getUser;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Row(

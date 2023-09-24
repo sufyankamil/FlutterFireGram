@@ -26,13 +26,7 @@ class _FeedScreenState extends State<FeedScreen> {
           : CommonAppBar(
               backgroundColor: mobileBackgroundColor,
               primaryColor: Colors.blue,
-              messengerButtonCallback: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (context) => CommentScreen( snap: widget.snap,),
-                //   ),
-                // );
-              },
+              messengerButtonCallback: () {},
               icon: Icons.messenger_outline_sharp,
             ),
       body: StreamBuilder(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
 import 'package:instagram_clone/widgets/common_appbar.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../widgets/post_card.dart';
 
@@ -34,8 +35,23 @@ class _FeedScreenState extends State<FeedScreen> {
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator.adaptive(),
+          
+            return Center(
+              child: Shimmer.fromColors(
+                period: const Duration(
+                    seconds:
+                        5), // Control the duration of the shimmer animation
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.grey[900],
+                  ),
+                ),
+              ),
             );
           }
           return ListView.builder(

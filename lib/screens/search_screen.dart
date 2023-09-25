@@ -4,6 +4,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:shimmer/shimmer.dart';
 
+import 'profile_screen.dart';
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -83,15 +85,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemCount: (snapshot.data! as dynamic).docs.length,
                     itemBuilder: (context, index) {
                       return InkWell(
-                        onTap: () {},
-                        // onTap: () => Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (context) => ProfileScreen(
-                        //       uid: (snapshot.data! as dynamic).docs[index]
-                        //           ['uid'],
-                        //     ),
-                        //   ),
-                        // ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(
+                              uid: (snapshot.data! as dynamic).docs[index]
+                                  ['uid'],
+                            ),
+                          ),
+                        ),
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(
